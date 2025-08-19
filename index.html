@@ -19,11 +19,25 @@
       border-radius: 12px; 
       box-shadow: 0 10px 30px rgba(0,0,0,.08); 
     }
+
+    /* container do título + logo */
+    .header {
+      display: flex;
+      justify-content: space-between; /* título à esquerda, logo à direita */
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .header img {
+      height: 40px;   /* ajusta a altura da logo */
+      width: auto;
+    }
     
-    h1 { 
-      margin: 0 0 12px; 
+    .header h1 { 
+      margin: 0; 
       color: #3C479D;       
       font-weight: 800;
+      font-size: 24px;
     }
     
     label { 
@@ -34,14 +48,12 @@
       margin-left: 4px;     
     }
 
-    /* * vermelho nos labels obrigatórios */
     label.required::after {
       content: " *";
       color: red;
       font-weight: bold;
     }
     
-    /* estilo dos 4 boxes principais */
     .form-box {
       width: 100%;
       box-sizing: border-box;
@@ -60,9 +72,7 @@
       outline:none;
     }
 
-    /* select com o mesmo visual dos inputs */
     select.form-box {
-      /* aparência consistente e espaço pro "caret" */
       -webkit-appearance: none;
       appearance: none;
       padding-right: 12px;
@@ -75,7 +85,6 @@
       cursor: pointer;
     }
 
-    /* estilo separado para observação */
     .form-observacao {
       width: 100%;
       box-sizing: border-box;
@@ -117,9 +126,13 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Intersolar - 2025</h1>
 
-    <!-- Envia direto para o seu Webhook do n8n -->
+    <!-- header com logo à direita -->
+    <div class="header">
+      <h1>Intersolar - 2025</h1>
+      <img src="logo.png" alt="Logo Intersolar"> <!-- ajuste o nome da imagem -->
+    </div>
+
     <form method="post" action="https://n8n.datlaz.com/webhook/leads/inter-solar" autocomplete="off">
       <div class="row">
         <div>
@@ -153,7 +166,6 @@
       <label for="obs">Observação</label>
       <textarea id="obs" name="Observacao" class="form-observacao"></textarea>
 
-      <!-- Úteis para auditoria/idempotência -->
       <input type="hidden" name="timestamp" value="">
       <input type="hidden" name="source" value="Inter Solar 2025">
 
@@ -163,9 +175,7 @@
   </div>
 
   <script>
-    // coloca timestamp no momento da abertura
     document.querySelector('input[name="timestamp"]').value = new Date().toISOString();
-    // desabilita o botão no clique para evitar duplo envio
     const form = document.querySelector('form');
     form.addEventListener('submit', () => {
       form.querySelector('button[type="submit"]').disabled = true;

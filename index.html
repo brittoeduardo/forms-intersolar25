@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Captação de Leads</title>
+  <style>
+    :root{color-scheme:light dark}
+    body { 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; 
+      background:#f3f6fa; 
+      margin:0; 
+    }
+    .wrap { 
+      max-width: 640px; 
+      margin: 40px auto; 
+      padding: 24px; 
+      background: #fff; 
+      border-radius: 12px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,.08); 
+    }
+    
+    h1 { 
+      margin: 0 0 12px; 
+      color: #3C479D;       
+      font-weight: 800;
+    }
+    
+    label { 
+      display:block; 
+      margin-top: 12px; 
+      font-weight: 700; 
+      color: #3C479D;       
+      margin-left: 4px;     
+    }
+
+    /* * vermelho nos labels obrigatórios */
+    label.required::after {
+      content: " *";
+      color: red;
+      font-weight: bold;
+    }
+    
+    /* estilo dos 4 boxes principais */
+    .form-box {
+      width: 100%;
+      box-sizing: border-box;
+      padding:12px; 
+      border-radius:10px; 
+      border:2px solid #3C479D; 
+      margin-top:6px; 
+      font-size:16px;
+      background:#fff; 
+      color:#111;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-box:focus {
+      border-color:#2e3576; 
+      box-shadow:0 0 4px rgba(60,71,157,0.4);
+      outline:none;
+    }
+
+    /* select com o mesmo visual dos inputs */
+    select.form-box {
+      /* aparência consistente e espaço pro "caret" */
+      -webkit-appearance: none;
+      appearance: none;
+      padding-right: 12px;
+      background-color: #fff;
+      background-image: linear-gradient(45deg, transparent 50%, #3C479D 50%),
+                        linear-gradient(135deg, #3C479D 50%, transparent 50%);
+      background-position: right 16px top 18px, right 10px top 18px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      cursor: pointer;
+    }
+
+    /* estilo separado para observação */
+    .form-observacao {
+      width: 100%;
+      box-sizing: border-box;
+      min-height:96px;
+      resize:vertical;
+      padding:12px; 
+      border-radius:10px; 
+      border:2px solid #3C479D; 
+      margin-top:6px; 
+      font-size:16px;
+      background:#fff; 
+      color:#111;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-observacao:focus {
+      border-color:#2e3576; 
+      box-shadow:0 0 4px rgba(60,71,157,0.4);
+      outline:none;
+    }
+    
+    button { 
+      background:#3C479D; 
+      color:#fff; 
+      font-weight:700; 
+      cursor:pointer; 
+      border:none; 
+      margin:18px 0 0 4px; 
+      padding:12px 24px; 
+      border-radius:10px; 
+      font-size:16px;
+      transition: background 0.2s;
+    }
+    button:hover { background:#2e3576; }
+    
+    .row { display:grid; gap:12px; grid-template-columns:1fr 1fr; }
+    @media (max-width:640px){ .row{ grid-template-columns:1fr } }
+    small{opacity:.7; margin-left:4px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Intersolar - 2025</h1>
+
+    <!-- Envia direto para o seu Webhook do n8n -->
+    <form method="post" action="https://n8n.datlaz.com/webhook/leads/inter-solar" autocomplete="off">
+      <div class="row">
+        <div>
+          <label for="nome" class="required">Nome</label>
+          <input id="nome" name="Nome" class="form-box" required>
+        </div>
+        <div>
+          <label for="empresa" class="required">Empresa</label>
+          <input id="empresa" name="Empresa" class="form-box" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="telefone" class="required">Telefone</label>
+          <input id="telefone" name="Telefone" class="form-box" inputmode="numeric" pattern="[0-9()+\s-]{8,}" required>
+        </div>
+        <div>
+          <label for="ramo" class="required">Ramo</label>   
+          <select id="ramo" name="Ramo" class="form-box" required>
+            <option value="" selected disabled>Selecione...</option>
+            <option>Integrador</option>
+            <option>Desenvolvedor</option>
+            <option>Tecnologia</option>
+            <option>Jurídico</option>
+            <option>Outro</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="obs">Observação</label>
+      <textarea id="obs" name="Observacao" class="form-observacao"></textarea>
+
+      <!-- Úteis para auditoria/idempotência -->
+      <input type="hidden" name="timestamp" value="">
+      <input type="hidden" name="source" value="Inter Solar 2025">
+
+      <button type="submit">Enviar</button>
+      <small>Após enviar, a página pode retornar ao formulário para novo cadastro.</small>
+    </form>
+  </div>
+
+  <script>
+    // coloca timestamp no momento da abertura
+    document.querySelector('input[name="timestamp"]').value = new Date().toISOString();
+    // desabilita o botão no clique para evitar duplo envio
+    const form = document.querySelector('form');
+    form.addEventListener('submit', () => {
+      form.querySelector('button[type="submit"]').disabled = true;
+    });
+  </script>
+</body>
+</html>

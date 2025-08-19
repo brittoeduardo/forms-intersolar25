@@ -3,125 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Captação de Leads</title>
+  <title>Intersolar South America - 2025</title>
   <style>
     :root{color-scheme:light dark}
-    body { 
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; 
-      background:#f3f6fa; 
-      margin:0; 
-    }
-    .wrap { 
-      max-width: 640px; 
-      margin: 40px auto; 
-      padding: 24px; 
-      background: #fff; 
-      border-radius: 12px; 
-      box-shadow: 0 10px 30px rgba(0,0,0,.08); 
-    }
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:#f3f6fa;margin:0}
+    .wrap{max-width:960px;margin:40px auto;padding:24px;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
 
-    /* container do título + logo */
-    .header {
-      display: flex;
-      justify-content: space-between; /* título à esquerda, logo à direita */
-      align-items: center;
-      margin-bottom: 20px;
-    }
+    /* header */
+    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+    .header h1{margin:0;color:#3C479D;font-weight:800;font-size:24px}
+    .header img{height:40px;width:auto}
 
-    .header img {
-      height: 40px;   /* ajusta a altura da logo */
-      width: auto;
-    }
-    
-    .header h1 { 
-      margin: 0; 
-      color: #3C479D;       
-      font-weight: 800;
-      font-size: 24px;
-    }
-    
-    label { 
-      display:block; 
-      margin-top: 12px; 
-      font-weight: 700; 
-      color: #3C479D;       
-      margin-left: 4px;     
-    }
+    /* labels / campos */
+    label{display:block;margin:12px 0 6px;font-weight:700;color:#3C479D}
+    label.required::after{content:" *";color:red;font-weight:bold}
 
-    label.required::after {
-      content: " *";
-      color: red;
-      font-weight: bold;
+    .form-box, .form-observacao{
+      height: 67.4px;width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:2px solid #3C479D;
+      font-size:16px;background:#fff;color:#111;transition:border-color .2s,box-shadow .2s
     }
-    
-    .form-box {
-      width: 100%;
-      box-sizing: border-box;
-      padding:12px; 
-      border-radius:10px; 
-      border:2px solid #3C479D; 
-      margin-top:6px; 
-      font-size:16px;
-      background:#fff; 
-      color:#111;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .form-box:focus {
-      border-color:#2e3576; 
-      box-shadow:0 0 4px rgba(60,71,157,0.4);
-      outline:none;
-    }
+    .form-box:focus,.form-observacao:focus{border-color:#2e3576;box-shadow:0 0 4px rgba(60,71,157,.4);outline:none}
+    .form-observacao{min-height:96px;resize:vertical}
 
-    select.form-box {
-      -webkit-appearance: none;
-      appearance: none;
-      padding-right: 12px;
-      background-color: #fff;
-      background-image: linear-gradient(45deg, transparent 50%, #3C479D 50%),
-                        linear-gradient(135deg, #3C479D 50%, transparent 50%);
-      background-position: right 16px top 18px, right 10px top 18px;
-      background-size: 6px 6px, 6px 6px;
-      background-repeat: no-repeat;
-      cursor: pointer;
-    }
+    /* grid principal: esquerda (inputs) | direita (checkboxes) */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+    .left-col .field{margin-bottom:12px}
 
-    .form-observacao {
-      width: 100%;
-      box-sizing: border-box;
-      min-height:96px;
-      resize:vertical;
-      padding:12px; 
-      border-radius:10px; 
-      border:2px solid #3C479D; 
-      margin-top:6px; 
-      font-size:16px;
-      background:#fff; 
-      color:#111;
-      transition: border-color 0.2s, box-shadow 0.2s;
+    /* lista de checkboxes */
+    .checkbox-group{margin-top:4px;border-radius:10px;border:2px solid #3C479D;padding:10px}
+    .checkbox-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px}
+    .checkbox-item + .checkbox-item{margin-top:4px}
+    .checkbox-item input[type="checkbox"]{
+      width:22px;height:22px;accent-color:#3C479D;
     }
-    .form-observacao:focus {
-      border-color:#2e3576; 
-      box-shadow:0 0 4px rgba(60,71,157,0.4);
-      outline:none;
+    .checkbox-item label{margin:0;font-weight:600;color:#3C479D}
+
+    button{background:#3C479D;color:#fff;font-weight:700;cursor:pointer;border:none;margin-top:18px;padding:12px 24px;border-radius:10px;font-size:16px;transition:background .2s}
+    button:hover{background:#2e3576}
+    small{opacity:.7}
+
+    /* mensagem de sucesso */
+    .success-msg{
+      color:green;
+      font-weight:bold;
+      margin-top:12px;
+      opacity:0;
+      transition:opacity .4s ease;
     }
-    
-    button { 
-      background:#3C479D; 
-      color:#fff; 
-      font-weight:700; 
-      cursor:pointer; 
-      border:none; 
-      margin:18px 0 0 4px; 
-      padding:12px 24px; 
-      border-radius:10px; 
-      font-size:16px;
-      transition: background 0.2s;
+    .success-msg.show{opacity:1;}
+
+    /* responsivo */
+    @media (max-width:700px){
+      .two-col{grid-template-columns:1fr}
+      .header h1{font-size:20px}
+      button{width:100%}
     }
-    button:hover { background:#2e3576; }
-    
-    .row { display:grid; gap:12px; grid-template-columns:1fr 1fr; }
-    @media (max-width:640px){ .row{ grid-template-columns:1fr } }
-    small{opacity:.7; margin-left:4px;}
   </style>
 </head>
 <body>
@@ -130,36 +66,57 @@
     <!-- header com logo à direita -->
     <div class="header">
       <h1>Intersolar - 2025</h1>
-      <img src="logo.png" alt="Logo Intersolar"> <!-- ajuste o nome da imagem -->
+      <img src="logo.png" alt="Logo Intersolar">
     </div>
 
-    <form method="post" action="https://n8n.datlaz.com/webhook/leads/inter-solar" autocomplete="off">
-      <div class="row">
-        <div>
-          <label for="nome" class="required">Nome</label>
-          <input id="nome" name="Nome" class="form-box" required>
-        </div>
-        <div>
-          <label for="empresa" class="required">Empresa</label>
-          <input id="empresa" name="Empresa" class="form-box" required>
-        </div>
-      </div>
+    <!-- form -->
+    <form method="post" action="https://n8n.datlaz.com/webhook/leads/inter-solar" autocomplete="off" id="leadForm">
+      
+      <div class="two-col">
+        <!-- COLUNA ESQUERDA -->
+        <div class="left-col">
+          <div class="field">
+            <label for="nome" class="required">Nome</label>
+            <input id="nome" name="Nome" class="form-box" required>
+          </div>
 
-      <div class="row">
-        <div>
-          <label for="telefone" class="required">Telefone</label>
-          <input id="telefone" name="Telefone" class="form-box" inputmode="numeric" pattern="[0-9()+\s-]{8,}" required>
+          <div class="field">
+            <label for="empresa" class="required">Empresa</label>
+            <input id="empresa" name="Empresa" class="form-box" required>
+          </div>
+
+          <div class="field">
+            <label for="telefone" class="required">Telefone</label>
+            <input id="telefone" name="Telefone" class="form-box" placeholder="Ex: 41999999999" inputmode="numeric" pattern="[0-9()+\s-]{8,}" required>
+          </div>
         </div>
-        <div>
-          <label for="ramo" class="required">Ramo</label>   
-          <select id="ramo" name="Ramo" class="form-box" required>
-            <option value="" selected disabled>Selecione...</option>
-            <option>Integrador</option>
-            <option>Desenvolvedor</option>
-            <option>Tecnologia</option>
-            <option>Jurídico</option>
-            <option>Outro</option>
-          </select>
+
+        <!-- COLUNA DIREITA -->
+        <div class="right-col">
+          <label class="required">Ramo</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="ramo-integrador" name="Ramo[]" value="Integrador">
+              <label for="ramo-integrador">Integrador</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="ramo-desenvolvedor" name="Ramo[]" value="Desenvolvedor">
+              <label for="ramo-desenvolvedor">Desenvolvedor</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="ramo-tecnologia" name="Ramo[]" value="Tecnologia">
+              <label for="ramo-tecnologia">Tecnologia</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="ramo-juridico" name="Ramo[]" value="Jurídico">
+              <label for="ramo-juridico">Jurídico</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="ramo-outro" name="Ramo[]" value="Outro">
+              <label for="ramo-outro">Outro</label>
+            </div>
+          </div>
+          <small>Selecione uma ou mais opções.</small>
         </div>
       </div>
 
@@ -170,15 +127,55 @@
       <input type="hidden" name="source" value="Inter Solar 2025">
 
       <button type="submit">Enviar</button>
-      <small>Após enviar, a página pode retornar ao formulário para novo cadastro.</small>
+      <br><small>Após enviar, a página pode retornar ao formulário para novo cadastro.</small>
+      
+      <!-- espaço para a mensagem de sucesso -->
+      <p class="success-msg" id="successMsg">Suas informações foram salvas com sucesso ✅</p>
     </form>
   </div>
 
   <script>
+    // timestamp
     document.querySelector('input[name="timestamp"]').value = new Date().toISOString();
-    const form = document.querySelector('form');
-    form.addEventListener('submit', () => {
-      form.querySelector('button[type="submit"]').disabled = true;
+
+    const form = document.getElementById('leadForm');
+    const successMsg = document.getElementById('successMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const anyChecked = [...document.querySelectorAll('input[name="Ramo[]"]')]
+        .some(cb => cb.checked);
+      if (!anyChecked) {
+        alert('Selecione ao menos um Ramo.');
+        return;
+      }
+
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.textContent = "Enviando...";
+
+      try {
+        const formData = new FormData(form);
+        await fetch(form.action, { method: "POST", body: formData });
+
+        form.reset();
+        document.querySelector('input[name="timestamp"]').value = new Date().toISOString();
+
+        // mostra a mensagem de sucesso
+        successMsg.classList.add("show");
+
+        // esconde após 3s
+        setTimeout(() => {
+          successMsg.classList.remove("show");
+        }, 3000);
+
+      } catch (err) {
+        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Enviar";
+      }
     });
   </script>
 </body>

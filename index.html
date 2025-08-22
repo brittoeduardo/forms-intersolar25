@@ -77,19 +77,19 @@
         <div class="left-col">
           <div class="field">
             <label for="nome" class="required">Nome</label>
-            <input id="nome" name="Nome" class="form-box" required autocomplete="off">
+            <input id="nome" name="lead_nome"  class="form-box" required autocomplete="off" readonly>
           </div>
 
           <div class="field">
             <label for="empresa" class="required">Empresa</label>
-            <input id="empresa" name="Empresa" class="form-box" required autocomplete="off"> 
+            <input id="empresa" name="lead_empresa" class="form-box" required autocomplete="off" readonly>
           </div>
 
           <div class="field">
             <label for="telefone" class="required">Telefone</label>
             <input
               id="telefone"
-              name="Telefone"
+              name="lead_telefone"
               class="form-box"
               type="tel"
               inputmode="numeric"
@@ -98,7 +98,7 @@
               maxlength="16"
               required
               autocomplete="off"
-              > 
+              readonly>
             <!-- valor somente numérico para o n8n/pipedrive -->
             <input type="hidden" id="telefoneRaw" name="TelefoneNumerico">
           </div>
@@ -134,7 +134,7 @@
       </div>
 
       <label for="obs">Observação</label>
-      <textarea id="obs" name="Observacao" class="form-observacao" autocomplete="off"></textarea>
+      <textarea id="obs" name="lead_obs" class="form-observacao" autocomplete="off" readonly></textarea>
 
       <input type="hidden" name="timestamp" value="">
       <input type="hidden" name="source" value="Inter Solar 2025">
@@ -230,6 +230,14 @@
     });
     // inicializa caso venha preenchido por autofill
     applyMask();
+    ['nome','telefone','empresa','obs'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const handler = () => el.removeAttribute('readonly');
+    el.addEventListener('focus', handler, { once: true });
+    // se vier preenchido por autofill, ainda removemos:
+    setTimeout(() => el.removeAttribute('readonly'), 500);
+  });
   </script>
 </body>
 </html>

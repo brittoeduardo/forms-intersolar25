@@ -87,7 +87,19 @@
 
           <div class="field">
             <label for="telefone" class="required">Telefone</label>
-            <input id="telefone" name="Telefone" class="form-box" placeholder="Ex: 41999999999" inputmode="numeric" pattern="[0-9()+\s-]{8,}" required>
+            <input
+              id="telefone"
+              name="Telefone"
+              class="form-box"
+              type="tel"
+              inputmode="numeric"
+              autocomplete="tel"
+              placeholder="(11) 98888-7777"
+              maxlength="16"   <!-- comprimento com máscara -->
+              required
+            >
+            <!-- valor somente numérico para o n8n/pipedrive -->
+            <input type="hidden" id="telefoneRaw" name="TelefoneNumerico">
           </div>
         </div>
 
@@ -177,6 +189,47 @@
         button.textContent = "Enviar";
       }
     });
+    // ==== MÁSCARA DE TELEFONE BR ====
+    const onlyDigits = (s) => s.replace(/\D/g, "");
+
+    const formatPhoneBR = (v) => {
+      const d = onlyDigits(v).slice(0, 11); // DDD (2) + número (8/9)
+      if (!d) return "";
+      const dd = d.slice(0, 2);
+      const p = d.slice(2);
+
+      if (d.length <= 2) return `(${dd}`;
+      if (p.length <= 4) return `(${dd}) ${p}`;
+      if (p.length <= 8) return `(${dd}) ${p.slice(0, 4)}-${p.slice(4)}`;
+      return `(${dd}) ${p.slice(0, 5)}-${p.slice(5, 9)}`; // (DD) 9xxxx-xxxx
+    };
+
+    const tel = document.getElementById("telefone");
+    const telRaw = document.getElementById("telefoneRaw");
+
+    // formata enquanto digita / cola
+    const applyMask = () => {
+      tel.value = formatPhoneBR(tel.value);
+      telRaw.value = onlyDigits(tel.value); // guarda só números para o backend
+    };
+
+    tel.addEventListener("input", applyMask);
+    tel.addEventListener("blur", applyMask);
+    tel.addEventListener("paste", () => setTimeout(applyMask)); // garante após colar
+
+    // valida no submit: exige 10 (fixo) ou 11 (celular) dígitos
+    document.getElementById("leadForm").addEventListener("submit", (e) => {
+      const n = telRaw.value.length;
+      if (n !== 10 && n !== 11) {
+        e.preventDefault();
+        alert("Telefone inválido. Use DDD + número (10 ou 11 dígitos).");
+        tel.focus();
+        return;
+      }
+    });
+
+    // inicializa caso venha preenchido por autofill
+    applyMask();
   </script>
 </body>
 </html>

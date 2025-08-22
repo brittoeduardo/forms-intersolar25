@@ -1,235 +1,43 @@
-<!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Intersolar South America - 2025</title>
-  <style>
-    :root{color-scheme:light dark}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;background:#f3f6fa;margin:0}
-    .wrap{max-width:960px;margin:40px auto;padding:24px;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+<script>
+  // ==== MÁSCARA DE TELEFONE BR ====
+  const onlyDigits = (s) => s.replace(/\D/g, "");
 
-    /* header */
-    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-    .header h1{margin:0;color:#3C479D;font-weight:800;font-size:24px}
-    .header img{height:40px;width:auto}
+  const formatPhoneBR = (v) => {
+    const d = onlyDigits(v).slice(0, 11); // DDD (2) + número (8/9)
+    if (!d) return "";
+    const dd = d.slice(0, 2);
+    const p = d.slice(2);
 
-    /* labels / campos */
-    label{display:block;margin:12px 0 6px;font-weight:700;color:#3C479D}
-    label.required::after{content:" *";color:red;font-weight:bold}
+    if (d.length <= 2) return `(${dd}`;
+    if (p.length <= 4) return `(${dd}) ${p}`;
+    if (p.length <= 8) return `(${dd}) ${p.slice(0, 4)}-${p.slice(4)}`;
+    return `(${dd}) ${p.slice(0, 5)}-${p.slice(5, 9)}`; // (DD) 9xxxx-xxxx
+  };
 
-    .form-box, .form-observacao{
-      height: 67.4px;width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:2px solid #3C479D;
-      font-size:16px;background:#fff;color:#111;transition:border-color .2s,box-shadow .2s
-    }
-    .form-box:focus,.form-observacao:focus{border-color:#2e3576;box-shadow:0 0 4px rgba(60,71,157,.4);outline:none}
-    .form-observacao{min-height:96px;resize:vertical}
+  const tel = document.getElementById("telefone");
+  const telRaw = document.getElementById("telefoneRaw");
 
-    /* grid principal: esquerda (inputs) | direita (checkboxes) */
-    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
-    .left-col .field{margin-bottom:12px}
+  // formata enquanto digita / cola
+  const applyMask = () => {
+    tel.value = formatPhoneBR(tel.value);
+    telRaw.value = onlyDigits(tel.value); // guarda só números para o backend
+  };
 
-    /* lista de checkboxes */
-    .checkbox-group{margin-top:4px;border-radius:10px;border:2px solid #3C479D;padding:10px}
-    .checkbox-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px}
-    .checkbox-item + .checkbox-item{margin-top:4px}
-    .checkbox-item input[type="checkbox"]{
-      width:22px;height:22px;accent-color:#3C479D;
-    }
-    .checkbox-item label{margin:0;font-weight:600;color:#3C479D}
+  tel.addEventListener("input", applyMask);
+  tel.addEventListener("blur", applyMask);
+  tel.addEventListener("paste", () => setTimeout(applyMask)); // garante após colar
 
-    button{background:#3C479D;color:#fff;font-weight:700;cursor:pointer;border:none;margin-top:18px;padding:12px 24px;border-radius:10px;font-size:16px;transition:background .2s}
-    button:hover{background:#2e3576}
-    small{opacity:.7}
-
-    /* mensagem de sucesso */
-    .success-msg{
-      color:green;
-      font-weight:bold;
-      margin-top:12px;
-      opacity:0;
-      transition:opacity .4s ease;
-    }
-    .success-msg.show{opacity:1;}
-
-    /* responsivo */
-    @media (max-width:700px){
-      .two-col{grid-template-columns:1fr}
-      .header h1{font-size:20px}
-      button{width:100%}
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-
-    <!-- header com logo à direita -->
-    <div class="header">
-      <h1>Intersolar - 2025</h1>
-      <img src="logo.png" alt="Logo Intersolar">
-    </div>
-
-    <!-- form -->
-    <form method="post" action="https://n8n.datlaz.com/webhook/leads/inter-solar" autocomplete="off" id="leadForm">
-      
-      <div class="two-col">
-        <!-- COLUNA ESQUERDA -->
-        <div class="left-col">
-          <div class="field">
-            <label for="nome" class="required">Nome</label>
-            <input id="nome" name="Nome" class="form-box" required autocomplete="off">
-          </div>
-
-          <div class="field">
-            <label for="empresa" class="required">Empresa</label>
-            <input id="empresa" name="Empresa" class="form-box" required autocomplete="off"> 
-          </div>
-
-          <div class="field">
-            <label for="telefone" class="required">Telefone</label>
-            <input
-              id="telefone"
-              name="Telefone"
-              class="form-box"
-              type="tel"
-              inputmode="numeric"
-              autocomplete="tel"
-              placeholder="(XX) 99999-9999"
-              maxlength="16"
-              required
-              autocomplete="off"
-              > 
-            <!-- valor somente numérico para o n8n/pipedrive -->
-            <input type="hidden" id="telefoneRaw" name="TelefoneNumerico">
-          </div>
-        </div>
-
-        <!-- COLUNA DIREITA -->
-        <div class="right-col">
-          <label class="required">Ramo</label>
-          <div class="checkbox-group">
-            <div class="checkbox-item">
-              <input type="checkbox" id="ramo-integrador" name="Ramo[]" value="Integrador">
-              <label for="ramo-integrador">Integrador</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="ramo-desenvolvedor" name="Ramo[]" value="Desenvolvedor">
-              <label for="ramo-desenvolvedor">Desenvolvedor</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="ramo-tecnologia" name="Ramo[]" value="Tecnologia">
-              <label for="ramo-tecnologia">Tecnologia</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="ramo-juridico" name="Ramo[]" value="Jurídico">
-              <label for="ramo-juridico">Jurídico</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="ramo-outro" name="Ramo[]" value="Outro">
-              <label for="ramo-outro">Outro</label>
-            </div>
-          </div>
-          <small>Selecione uma ou mais opções.</small>
-        </div>
-      </div>
-
-      <label for="obs">Observação</label>
-      <textarea id="obs" name="Observacao" class="form-observacao" autocomplete="off"></textarea>
-
-      <input type="hidden" name="timestamp" value="">
-      <input type="hidden" name="source" value="Inter Solar 2025">
-
-      <button type="submit">Enviar</button>
-      <br><small>Após enviar, a página pode retornar ao formulário para novo cadastro.</small>
-      
-      <!-- espaço para a mensagem de sucesso -->
-      <p class="success-msg" id="successMsg">Suas informações foram salvas com sucesso ✅</p>
-    </form>
-  </div>
-
-  <script>
-    // timestamp
-    document.querySelector('input[name="timestamp"]').value = new Date().toISOString();
-
-    const form = document.getElementById('leadForm');
-    const successMsg = document.getElementById('successMsg');
-
-    form.addEventListener('submit', async (e) => {
+  // valida no submit: exige 10 (fixo) ou 11 (celular) dígitos
+  document.getElementById("leadForm").addEventListener("submit", (e) => {
+    const n = telRaw.value.length;
+    if (n !== 10 && n !== 11) {
       e.preventDefault();
+      alert("Telefone inválido. Use DDD + número (10 ou 11 dígitos).");
+      tel.focus();
+      return;
+    }
+  });
 
-      const anyChecked = [...document.querySelectorAll('input[name="Ramo[]"]')]
-        .some(cb => cb.checked);
-      if (!anyChecked) {
-        alert('Selecione ao menos um Ramo.');
-        return;
-      }
-
-      const button = form.querySelector('button[type="submit"]');
-      button.disabled = true;
-      button.textContent = "Enviando...";
-
-      try {
-        const formData = new FormData(form);
-        await fetch(form.action, { method: "POST", body: formData });
-
-        form.reset();
-        document.querySelector('input[name="timestamp"]').value = new Date().toISOString();
-
-        // mostra a mensagem de sucesso
-        successMsg.classList.add("show");
-
-        // esconde após 3s
-        setTimeout(() => {
-          successMsg.classList.remove("show");
-        }, 3000);
-
-      } catch (err) {
-        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Enviar";
-      }
-    });
-    // ==== MÁSCARA DE TELEFONE BR ====
-    const onlyDigits = (s) => s.replace(/\D/g, "");
-
-    const formatPhoneBR = (v) => {
-      const d = onlyDigits(v).slice(0, 11); // DDD (2) + número (8/9)
-      if (!d) return "";
-      const dd = d.slice(0, 2);
-      const p = d.slice(2);
-
-      if (d.length <= 2) return `(${dd}`;
-      if (p.length <= 4) return `(${dd}) ${p}`;
-      if (p.length <= 8) return `(${dd}) ${p.slice(0, 4)}-${p.slice(4)}`;
-      return `(${dd}) ${p.slice(0, 5)}-${p.slice(5, 9)}`; // (DD) 9xxxx-xxxx
-    };
-
-    const tel = document.getElementById("telefone");
-    const telRaw = document.getElementById("telefoneRaw");
-
-    // formata enquanto digita / cola
-    const applyMask = () => {
-      tel.value = formatPhoneBR(tel.value);
-      telRaw.value = onlyDigits(tel.value); // guarda só números para o backend
-    };
-
-    tel.addEventListener("input", applyMask);
-    tel.addEventListener("blur", applyMask);
-    tel.addEventListener("paste", () => setTimeout(applyMask)); // garante após colar
-
-    // valida no submit: exige 10 (fixo) ou 11 (celular) dígitos
-    document.getElementById("leadForm").addEventListener("submit", (e) => {
-      const n = telRaw.value.length;
-      if (n !== 10 && n !== 11) {
-        e.preventDefault();
-        alert("Telefone inválido. Use DDD + número (10 ou 11 dígitos).");
-        tel.focus();
-        return;
-      }
-    });
-    // inicializa caso venha preenchido por autofill
-    applyMask();
-  </script>
-</body>
-</html>
+  // inicializa caso venha preenchido por autofill
+  applyMask();
+</script>

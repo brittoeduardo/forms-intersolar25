@@ -94,7 +94,7 @@
               type="tel"
               inputmode="numeric"
               autocomplete="tel"
-              placeholder="(XX) 99999-9999"
+              placeholder="(xx) 99999-9999"
               maxlength="16"
               required
               autocomplete="off"
@@ -168,27 +168,71 @@
       button.disabled = true;
       button.textContent = "Enviando...";
 
-      try {
-        const formData = new FormData(form);
-        await fetch(form.action, { method: "POST", body: formData });
-
-        form.reset();
-        document.querySelector('input[name="timestamp"]').value = new Date().toISOString();
-
-        // mostra a mensagem de sucesso
-        successMsg.classList.add("show");
-
-        // esconde após 3s
-        setTimeout(() => {
-          successMsg.classList.remove("show");
-        }, 3000);
-
-      } catch (err) {
-        alert("Ocorreu um erro ao enviar os dados. Tente novamente.");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Enviar";
+      // Salva os dados localmente se estiver offline
+      function saveLocally(formData) {
+        const savedData = JSON.parse(localStorage.getItem("formData")) || [];
+        savedData.push(formData);
+        localStorage.setItem("formData", JSON.stringify(savedData));
       }
+
+      // Envia os dados para o servidor
+      async function sendToServer(formData) {
+        try {
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData
+          });
+          if (!response.ok) throw new Error("Erro no envio dos dados");
+          return true;
+        } catch (error) {
+          console.error("Erro ao enviar para o servidor:", error);
+          return false;
+        }
+      }
+
+      // Função de envio automático quando a conexão for restabelecida
+      function syncData() {
+        const savedData = JSON.parse(localStorage.getItem("formData")) || [];
+        if (savedData.length === 0) return;
+
+        savedData.forEach(async (formData, index) => {
+          const success = await sendToServer(formData);
+          if (success) {
+            savedData.splice(index, 1); // Remove os dados enviados com sucesso
+            localStorage.setItem("formData", JSON.stringify(savedData));
+          }
+        });
+      }
+
+      // Verifica quando a conexão for restabelecida
+      window.addEventListener('online', () => {
+        successMsg.textContent = "Conexão restabelecida! Enviando dados...";
+        successMsg.classList.add("show");
+        setTimeout(() => successMsg.classList.remove("show"), 3000);
+        syncData();
+      });
+
+      // Se estiver online, tenta enviar os dados imediatamente
+      if (navigator.onLine) {
+        const formData = new FormData(form);
+        const success = await sendToServer(formData);
+        if (success) {
+          successMsg.textContent = "Dados enviados com sucesso!";
+          successMsg.classList.add("show");
+          setTimeout(() => successMsg.classList.remove("show"), 3000);
+        }
+      } else {
+        // Se estiver offline, salva os dados localmente
+        const formData = new FormData(form);
+        saveLocally(formData);
+        successMsg.textContent = "Dados salvos localmente! Enviaremos quando a conexão for restabelecida.";
+        successMsg.classList.add("show");
+        setTimeout(() => successMsg.classList.remove("show"), 3000);
+      }
+
+      // Reabilita o botão
+      button.disabled = false;
+      button.textContent = "Enviar";
     });
 
     // Máscara de telefone BR
@@ -229,6 +273,7 @@
         return;
       }
     });
+
     // inicializa caso venha preenchido por autofill
     applyMask();
   </script>

@@ -77,12 +77,12 @@
         <div class="left-col">
           <div class="field">
             <label for="nome" class="required">Nome</label>
-            <input id="nome" name="Nome" class="form-box" required>
+            <input id="nome" name="Nome" class="form-box" required autocomplete="off">
           </div>
 
           <div class="field">
             <label for="empresa" class="required">Empresa</label>
-            <input id="empresa" name="Empresa" class="form-box" required>
+            <input id="empresa" name="Empresa" class="form-box" required autocomplete="off">
           </div>
 
           <div class="field">
@@ -94,10 +94,10 @@
               type="tel"
               inputmode="numeric"
               autocomplete="tel"
-              placeholder="(11) 98888-7777"
-              maxlength="16"   <!-- comprimento com máscara -->
+              placeholder="(xx) 99999-9999"
+              maxlength="16" 
               required
-            >
+              autocomplete="off"
             <!-- valor somente numérico para o n8n/pipedrive -->
             <input type="hidden" id="telefoneRaw" name="TelefoneNumerico">
           </div>
@@ -133,7 +133,7 @@
       </div>
 
       <label for="obs">Observação</label>
-      <textarea id="obs" name="Observacao" class="form-observacao"></textarea>
+      <textarea id="obs" name="Observacao" class="form-observacao" autocomplete="off"></textarea>
 
       <input type="hidden" name="timestamp" value="">
       <input type="hidden" name="source" value="Inter Solar 2025">

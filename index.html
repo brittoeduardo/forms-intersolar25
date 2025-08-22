@@ -228,9 +228,16 @@
         return;
       }
     });
-
     // inicializa caso venha preenchido por autofill
     applyMask();
+    ['nome','telefone','empresa','obs'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const handler = () => el.removeAttribute('readonly');
+    el.addEventListener('focus', handler, { once: true });
+    // se vier preenchido por autofill, ainda removemos:
+    setTimeout(() => el.removeAttribute('readonly'), 500);
+  });
   </script>
 </body>
 </html>

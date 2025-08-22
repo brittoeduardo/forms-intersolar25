@@ -249,7 +249,9 @@
         successMsg.textContent = "Dados salvos localmente! Enviaremos quando a conexão for restabelecida.";
         successMsg.classList.add("show");
         setTimeout(() => successMsg.classList.remove("show"), 3000);
-        downloadCSV([Array.from(formData.keys()), Array.from(formData.values())]);  // Baixa o CSV com os dados
+        
+        // Baixa o CSV
+        downloadCSV([Array.from(formData.keys()), Array.from(formData.values())]); 
       }
 
       // Reabilita o botão

@@ -200,7 +200,18 @@
         }
       }
 
-      // Função de envio automático quando a conexão for restabelecida
+      // Função para gerar e baixar o arquivo CSV
+      function downloadCSV(data) {
+        const csvContent = "data:text/csv;charset=utf-8," 
+          + data.map(row => row.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "formsintersolar.csv");
+        link.click();
+      }
+
+      // Envio automático quando a conexão for restabelecida
       function syncData() {
         const savedData = JSON.parse(localStorage.getItem("formData")) || [];
         if (savedData.length === 0) return;
@@ -222,7 +233,7 @@
         syncData();
       });
 
-      // Se estiver online, tenta enviar os dados imediatamente
+      // Se estiver online, envia os dados imediatamente
       if (navigator.onLine) {
         const formData = new FormData(form);
         const success = await sendToServer(formData);
@@ -238,6 +249,7 @@
         successMsg.textContent = "Dados salvos localmente! Enviaremos quando a conexão for restabelecida.";
         successMsg.classList.add("show");
         setTimeout(() => successMsg.classList.remove("show"), 3000);
+        downloadCSV([Array.from(formData.keys()), Array.from(formData.values())]);  // Baixa o CSV com os dados
       }
 
       // Reabilita o botão
